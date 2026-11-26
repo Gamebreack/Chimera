@@ -13,10 +13,14 @@ repos:
     rev: v6.0.0
     hooks:
       # stages pinned: these hooks' manifests also declare other stages; all are pinned for consistency.
+      # Patches are excluded: a blank context line in a unified diff is a single space,
+      # and the example records each patch's SHA-256.
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
+        exclude: \.patch$
         stages: [pre-commit]
       - id: end-of-file-fixer
+        exclude: \.patch$
         stages: [pre-commit]
       - id: check-yaml
         stages: [pre-commit]

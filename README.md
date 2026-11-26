@@ -17,7 +17,7 @@ Chimera is an Agent Skill for when several agents or people have each built the 
 
 ## How it works
 
-Full flow, checked against the skill: [flow-map.md](flow-map.md).
+Solid lines are the main path; dotted lines and the dashed box are the no-candidate outcomes. Full flow, checked against the skill: [flow-map.md](flow-map.md).
 
 ```mermaid
 %%{init: {"theme":"base","themeVariables":{"fontFamily":"system-ui, -apple-system, Segoe UI, sans-serif","fontSize":"15px","primaryTextColor":"#1b221e","lineColor":"#8a968f","clusterBkg":"transparent","clusterBorder":"#b7c0ba","titleColor":"#5d6962","edgeLabelBackground":"#ffffff"},"flowchart":{"curve":"basis","nodeSpacing":22,"rankSpacing":30,"padding":14,"htmlLabels":true}}}%%
@@ -35,18 +35,24 @@ flowchart LR
     S --> F
     F --> V
     V --> R
+    %% 5: optional
     P -.->|"too few"| N
+    %% 6: optional
     S -.->|"none viable"| N
+    %% 7: optional
     N -.-> R
 
     classDef ext fill:#e7eae8,stroke:#8a968f,color:#1b221e
     classDef p1 fill:#dbe8f6,stroke:#4a7fb5,color:#1b221e
     classDef p2 fill:#fbefd2,stroke:#c3962c,color:#1b221e
     classDef p3 fill:#d8eee2,stroke:#3f8f68,color:#1b221e
+    classDef p4 fill:#e7def4,stroke:#7a5aa6,color:#1b221e
+    classDef side fill:#f5f6f5,stroke:#a9b4ad,color:#5d6962,stroke-dasharray:4 3
     class I,P p1
     class S,F p2
-    class V,R p3
-    class N ext
+    class V p3
+    class R p4
+    class N side
     linkStyle 5,6,7 stroke:#8a968f,stroke-width:1.5px,stroke-dasharray:2 3
 ```
 
@@ -63,7 +69,7 @@ Two separate fields. The status says what synthesis produced; the verdict says w
 
 | Verdict | Meaning |
 |---|---|
-| `pass` | every required check passed on the exact final candidate and independent review found no blocker |
+| `pass` | every required check passed on the exact final candidate, all other required evidence is present, and independent review found no blocker |
 | `fix` | a confirmed, unresolved defect in the final candidate (wins over missing evidence) |
 | `inconclusive` | no candidate, no independent review, or required evidence missing or not tied to the candidate |
 

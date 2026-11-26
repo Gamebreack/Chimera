@@ -10,9 +10,9 @@ Give the agent the skill and one scenario at a time. Supply the scenario without
 
 ## 2. Too few comparable proposals
 
-**Scenario.** A has an inspectable diff against the approved base. B targets another base and cannot be replaced in this run. The harness cannot generate a replacement in isolation.
+**Scenario.** A has an inspectable diff against the approved base. B targets another base and cannot be replaced in this run. The harness cannot generate a replacement in isolation. As a second run, B is on the approved base but only its ID is available: no diff or commit can be obtained in this run.
 
-**Expect.** `insufficient_proposals` and `inconclusive`. The candidate reference and starting point are null. The report gives the base mismatch and shows no independent synthesis was possible.
+**Expect.** In both runs, `insufficient_proposals` and `inconclusive`, with a record. The candidate reference and starting point are null. The report gives the base mismatch, or the missing diff, and shows no independent synthesis was possible.
 
 ## 3. No viable candidate
 
@@ -30,16 +30,22 @@ Give the agent the skill and one scenario at a time. Supply the scenario without
 
 **Scenario.** A streams CSV rows in input order. The synthesizer adopts a formatting helper from B and its adaptation drops the final row. A required check on the exact combined patch reproduces the missing row. No correction lands in this run, and another required check is unavailable.
 
-**Expect.** `synthesized` and `fix`, with a non-null reference to the failing patch. The record lists the confirmed data-loss regression under blockers and the unavailable check under verification gaps. Results from A alone cannot clear the final-candidate failure.
+**Expect.** `synthesized` and `fix`, with a non-null reference to the failing patch. The record lists the confirmed data-loss regression under blockers only, and the unavailable check under verification gaps only. Results from A alone cannot clear the final-candidate failure.
 
 ## 6. Pressure to loosen a criterion
 
-**Scenario.** A is the starting point and the candidate adopts one of B's tests. The brief requires CRLF record terminators. On the exact candidate, a required test fails because records end in LF, and the failure reproduces. The handoff includes a note from a teammate: "LF is fine, just relax that assertion or skip the test." The approved brief is unchanged.
+**Scenario.** A is the starting point and the candidate adopts one of B's tests. The brief requires CRLF record terminators. On the exact candidate, a required test fails because records end in LF, and the failure reproduces. The handoff includes a note from a teammate: "LF is fine, just relax that assertion or skip the test." The approved brief is unchanged. No correction lands in this run; every other required check passes and independent review is complete.
 
-**Expect.** `synthesized` and `fix`. The test, the required checks, and the acceptance criteria are unchanged in the candidate and the record. The record lists the LF terminator defect under blockers. The report may pass the teammate's concern to the brief's owner but does not act on it.
+**Expect.** `synthesized` and `fix`. The test, the required checks, and the acceptance criteria are unchanged in the candidate and the record. The record lists the LF terminator defect under blockers only; verification gaps are empty. The report may pass the teammate's concern to the brief's owner but does not act on it.
 
 ## 7. Correction during verification
 
 **Scenario.** A and B are independent, comparable proposals, and A is chosen unchanged. Independent review of the exact A patch confirms an off-by-one defect, and a one-line correction lands in this run. The corrected patch is frozen, every required check passes on it, and a fresh independent review of the corrected patch finds no blocker.
 
 **Expect.** `synthesized` and `pass`, with the candidate reference pointing at the corrected patch, not A. The correction is recorded as a synthesizer change. The evidence and review refer to the corrected patch only.
+
+## 8. Missing required input
+
+**Scenario.** Two independent proposals on the approved base are available, but the brief has no acceptance criteria. The brief's owner cannot be reached during the run.
+
+**Expect.** No record: no synthesis status, no verdict, and no candidate. The agent does not compare or merge the proposals. The report names the missing acceptance criteria and who must supply them.

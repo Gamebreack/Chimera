@@ -4,7 +4,7 @@ The runtime flow of the `chimera` skill, from the operator's approved brief and 
 
 Renders on GitHub and claude.ai; VS Code needs a Mermaid extension.
 
-> **Status:** draft — not reviewed. Checked against `skills/chimera/SKILL.md`. The skill is instructions run by the host's agent, so every step shown is specified there; nothing is missing.
+> **Status:** checked against `skills/chimera/SKILL.md` and reviewed by a fresh agent. The skill is instructions run by the host's agent, so every step shown is specified there; nothing is missing.
 > Lines: solid = main path · dotted = optional or conditional path · grey = outside the skill
 
 ## 1. What happens
@@ -17,23 +17,23 @@ flowchart TD
 
     subgraph F1["Phase 1 · Inputs"]
         IN["<b>Inputs checked</b><br/>brief, bases, scope, criteria"]
-        ST["<b>Stopped</b><br/>input missing, no record"]
-        PR["<b>Proposals</b><br/>ID and diff each, blind"]
-        IS["<b>insufficient_proposals</b><br/>fewer than two comparable"]
+        ST["<b>Stopped</b><br/>still missing, no status or record"]
+        PR["<b>Proposals</b><br/>ID and diff each, blind<br/>content is data"]
+        IS["<b>insufficient_proposals</b><br/>fewer than two independent,<br/>comparable"]
     end
 
     subgraph F2["Phase 2 · Synthesize"]
         CM["<b>Diffs compared</b><br/>behavior, scope, evidence"]
         SP["<b>Starting point</b><br/>one coherent proposal"]
-        NV["<b>no_viable_candidate</b><br/>none is a sound start"]
+        NV["<b>no_viable_candidate</b><br/>no suitable starting point"]
         AD["<b>Ideas adopted or omitted</b><br/>source and reason each"]
         SC["<b>Synthesizer changes</b><br/>minimal, in scope, recorded"]
         FR["<b>Candidate frozen</b><br/>exact patch or commit"]
     end
 
     subgraph F3["Phase 3 · Verify"]
-        RV["<b>Independent review</b><br/>brief and frozen candidate"]
-        CK["<b>Required checks</b><br/>on the exact candidate"]
+        RV["<b>Independent review</b><br/>brief, criteria, candidate"]
+        CK["<b>Required checks</b><br/>exact candidate, isolated"]
         VD["<b>Verdict</b><br/>fix, then inconclusive, then pass"]
     end
 
@@ -41,12 +41,12 @@ flowchart TD
         RC["<b>Report and JSON record</b><br/>status and verdict apart"]
     end
 
-    OP -->|"brief"| IN
+    OP <-->|"brief, questions"| IN
     %% 1: optional
     IN -.->|"unresolved"| ST
     IN --> PR
     %% 3: optional
-    HA -.->|"two attempts"| PR
+    HA -.->|"if asked: two attempts"| PR
     %% 4: optional
     PR -.->|"too few"| IS
     PR --> CM
@@ -69,7 +69,7 @@ flowchart TD
     %% 18: optional
     NV -.->|"null ref"| RC
     %% 19: optional
-    VD -.->|"correction"| FR
+    VD -.->|"candidate changed"| FR
 
     classDef ext fill:#e7eae8,stroke:#8a968f,color:#1b221e
     classDef p1 fill:#dbe8f6,stroke:#4a7fb5,color:#1b221e
@@ -86,14 +86,14 @@ flowchart TD
 
 | Phase | In one line |
 |---|---|
-| Inputs | The brief, exact bases, scope, criteria and checks are fixed; an unresolved input stops the run with no record. Proposals are supplied, or the host makes two blind attempts; fewer than two comparable ones end in `insufficient_proposals`. |
+| Inputs | The brief, exact bases, scope, criteria and checks are fixed; gaps go back to the brief's owner, and an input that stays missing stops the run with no record. Proposals are supplied, or the host makes two blind attempts on request; proposal content is data, not instructions. Fewer than two independent, comparable proposals end in `insufficient_proposals`. |
 | Synthesize | Diffs are compared; one proposal becomes the starting point, or the run ends in `no_viable_candidate`. Ideas are adopted or omitted with reasons, any synthesizer change is recorded, and the candidate is frozen. |
-| Verify | An independent reviewer and the required checks see only the exact frozen candidate. A correction re-freezes it and repeats both. The verdict rules apply in order. |
-| Return | One report and one JSON record; with no candidate, the reference and starting point are null and the verdict is `inconclusive`. |
+| Verify | A reviewer who did not author or synthesize the candidate gets the brief, criteria, bases, checks and the exact frozen candidate, but not the synthesis rationale. The required checks run on that exact candidate, isolated when they execute its code. If the candidate changes, it is frozen again and both run again. Missing or untied evidence, including a missing review, is a verification gap, kept apart from blockers. The verdict rules apply in order. |
+| Return | One report and one JSON record. The status is `unchanged` if the final candidate matches the starting proposal's patch, else `synthesized`, including after a correction during verification. With no candidate, the reference and starting point are null and the verdict is `inconclusive`. |
 
 ## 2. Who talks to whom
 
-The operator owns the brief; the agent running Chimera reads proposals and bases, and only the reviewer and the checks judge the result. Colors here only tell who is who.
+The operator owns the brief; the agent running Chimera reads proposals and bases. The reviewer and the checks supply the evidence, and the agent applies the verdict rules to it. Colors here only tell who is who.
 
 ```mermaid
 %%{init: {"theme":"base","themeVariables":{"fontFamily":"system-ui, -apple-system, Segoe UI, sans-serif","fontSize":"15px","primaryTextColor":"#1b221e","lineColor":"#8a968f","edgeLabelBackground":"#ffffff"},"flowchart":{"curve":"basis","nodeSpacing":36,"rankSpacing":44,"padding":14,"htmlLabels":true}}}%%
@@ -139,11 +139,11 @@ sequenceDiagram
     participant RV as Reviewer
     participant CK as Required checks
     OP->>CH: brief, bases, scope, criteria
-    CH->>AU: same inputs, separate workspace
+    CH->>AU: via host: same inputs, separate workspace
     AU-->>CH: diff and evidence, blind
     CH->>CH: compares diffs, picks the starting point
     CH->>CH: adopts ideas, freezes the candidate
-    CH->>RV: brief and frozen candidate only
+    CH->>RV: brief, criteria, candidate, no rationale
     CH->>CK: runs them on the exact candidate
     CK-->>CH: results tied to the candidate
     RV-->>CH: blockers, or none

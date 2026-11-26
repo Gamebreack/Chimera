@@ -24,7 +24,7 @@ Chimera is instructions, not code: it runs only through the agent and harness th
 - **False assurance:** a path through the verdict rules that yields `pass` without every required check on the final candidate and an independent review.
 - **Scope escape:** guidance that lets synthesis broaden the approved scope, push, deploy or approve a release.
 
-`scripts/validate.py` runs `git` and Python's `unittest` on the bundled example only, in a temporary directory.
+`scripts/validate.py` runs `git ls-files` read-only in the repository, then rebuilds the example fixture in a temporary directory and runs `git` and Python's `unittest` there. The Python it runs comes from the example page and its patches, so a change to `skills/chimera/examples/` is a change to code that runs in CI and in the pre-commit hook: review it as code.
 
 ## Out of scope
 

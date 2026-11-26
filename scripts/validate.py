@@ -6,7 +6,8 @@ Checks:
   links        every relative Markdown link in tracked files resolves.
   record       the worked example's JSON record has exactly the fields SKILL.md defines,
                valid status and verdict values, and a candidate digest that matches the patch.
-  evals        every eval states a scenario and an expectation with one status and one verdict.
+  evals        every eval states a scenario and an expectation with one status and one verdict,
+               or an expectation that starts with "No record" and names neither.
   fixture      the example fixture reproduces: base revision, patches apply, required checks
                pass on the candidate, the candidate keeps A's export.py, and its tests fail on B.
 
@@ -158,8 +159,13 @@ def check_evals(root: Path) -> list[str]:
             errors.append(f"{EVALS}: '{title}' needs **Scenario.** and **Expect.**")
             continue
         words = set(re.findall(r"`([a-z_]+)`", expect[1]))
-        if len(words & STATUSES) != 1 or len(words & VERDICTS) != 1:
-            errors.append(f"{EVALS}: '{title}' must expect exactly one status and one verdict")
+        no_record = expect[1].strip().startswith("No record")
+        if no_record:
+            if words & (STATUSES | VERDICTS):
+                errors.append(f"{EVALS}: '{title}' expects no record but names a status or verdict")
+        elif len(words & STATUSES) != 1 or len(words & VERDICTS) != 1:
+            errors.append(f"{EVALS}: '{title}' must expect exactly one status and one verdict, "
+                          "or start with 'No record'")
     return errors
 
 
