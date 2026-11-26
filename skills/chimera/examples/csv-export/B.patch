@@ -1,0 +1,28 @@
+diff --git a/export.py b/export.py
+index 7ec5343..406fb6b 100644
+--- a/export.py
++++ b/export.py
+@@ -5,4 +5,5 @@ import io
+ def csv_chunks(rows):
+     output = io.StringIO(newline="")
+     csv.writer(output).writerows(rows)
+-    yield output.getvalue()
++    buffered_rows = output.getvalue().splitlines(keepends=True)
++    yield from buffered_rows
+diff --git a/test_export.py b/test_export.py
+index 5b9e7e0..d61bd81 100644
+--- a/test_export.py
++++ b/test_export.py
+@@ -6,3 +6,12 @@ from export import csv_chunks
+ class ExportTests(unittest.TestCase):
+     def test_simple_rows(self):
+         self.assertEqual("a,1\r\nb,2\r\n", "".join(csv_chunks([["a", 1], ["b", 2]])))
++
++    def test_empty_input(self):
++        self.assertEqual("", "".join(csv_chunks([])))
++
++    def test_special_characters(self):
++        self.assertEqual(
++            '"a,b","say ""hi""","line\nbreak"\r\n',
++            "".join(csv_chunks([["a,b", 'say "hi"', "line\nbreak"]])),
++        )
