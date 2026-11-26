@@ -1,0 +1,20 @@
+# Local secrets
+.env
+.env.*
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+
+# Logs, temporary files, backups, and editor/OS metadata
+*.log
+*.tmp
+*.bak
+*~
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Local planning layer (not shipped)
+docs/megaplan/
