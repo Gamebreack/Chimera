@@ -58,6 +58,6 @@ Include a JSON record alongside the report with these fields:
 | `blockers` | confirmed unresolved defects in the final candidate |
 | `verification_gaps` | required evidence, including independent review, that is missing or not tied to the final candidate |
 
-Keep `synthesis_status` and `independent_verdict` as separate fields. Use empty lists, not omitted fields, when there is nothing to record.
+Keep `synthesis_status` and `independent_verdict` as separate fields. Use empty lists, not omitted fields, when there is nothing to record. With no candidate, the verdict is `inconclusive` because there is no candidate, so `blockers` and `verification_gaps` are empty.
 
 See [the CSV export example](examples/csv-export.md) for a report and JSON record. See [behavioral evals](evals/behavioral.md) for expected outcomes at the decision boundaries.

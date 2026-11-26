@@ -2,6 +2,7 @@
 
 import contextlib
 import io
+import os
 import shutil
 import subprocess
 import sys
@@ -64,7 +65,41 @@ class ValidateTests(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual([], validate.validate(self.root))
 
+    def test_main_exits_nonzero_on_failure(self):
+        self.edit(SKILL, "(evals/behavioral.md)", "(evals/missing.md)")
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(1, validate.main(["--root", str(self.root), "--skip-fixture"]))
+
+    def test_main_exits_zero_on_success(self):
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(0, validate.main(["--root", str(self.root), "--skip-fixture"]))
+
+    def test_fixture_ignores_inherited_git_variables(self):
+        outer = self.root / "outer"
+        outer.mkdir()
+        subprocess.run(["git", "init", "-q"], cwd=outer, check=True)
+        index = outer / ".git" / "index"
+        before = index.read_bytes() if index.exists() else None
+        saved = {k: os.environ.get(k) for k in ("GIT_DIR", "GIT_INDEX_FILE")}
+        os.environ["GIT_DIR"] = str(outer / ".git")
+        os.environ["GIT_INDEX_FILE"] = str(index)
+        try:
+            errors = self.errors(validate.check_fixture)
+        finally:
+            for key, value in saved.items():
+                if value is None:
+                    os.environ.pop(key, None)
+                else:
+                    os.environ[key] = value
+        self.assertEqual([], errors)
+        self.assertEqual(before, index.read_bytes() if index.exists() else None)
+
     # frontmatter
+    def test_missing_frontmatter(self):
+        text = (self.root / SKILL).read_text(encoding="utf-8")
+        (self.root / SKILL).write_text(text.replace("---\n", "", 2), encoding="utf-8")
+        self.assertReports(validate.check_frontmatter, "missing YAML frontmatter")
+
     def test_wrong_skill_name(self):
         self.edit(SKILL, "name: chimera", "name: Chimera")
         self.assertReports(validate.check_frontmatter, "name is")
@@ -127,6 +162,15 @@ class ValidateTests(unittest.TestCase):
     def test_eval_without_scenario(self):
         self.edit(EVALS, "**Scenario.** A and B are independent", "A and B are independent")
         self.assertReports(validate.check_evals, "needs **Scenario.**")
+
+    def test_no_evals(self):
+        (self.root / EVALS).write_text("# Behavioral evals\n", encoding="utf-8")
+        self.assertReports(validate.check_evals, "no evals found")
+
+    def test_no_record_only_at_start(self):
+        self.edit(EVALS, "**Expect.** `no_viable_candidate` and `inconclusive`.",
+                  "**Expect.** Unsure, perhaps No record.")
+        self.assertReports(validate.check_evals, "exactly one status and one verdict")
 
     def test_no_record_eval_naming_a_verdict(self):
         self.edit(EVALS, "No record: no synthesis status", "No record: `inconclusive`, no synthesis status")

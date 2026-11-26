@@ -38,7 +38,7 @@ flowchart LR
     %% 5: optional
     P -.->|"too few"| N
     %% 6: optional
-    S -.->|"none viable"| N
+    S -.->|"none suitable"| N
     %% 7: optional
     N -.-> R
 
@@ -111,7 +111,7 @@ Independent review needs someone other than the synthesizer: a fresh agent, a co
 ## Worked example and evals
 
 - [CSV export](skills/chimera/examples/csv-export.md): A streams rows, B buffers but has better edge-case tests. Chimera keeps A's design, adapts B's tests, adds one test for a criterion neither proposal covered, and verifies the new patch. The fixture reproduces from the page; CI rebuilds it on every push.
-- [Behavioral evals](skills/chimera/evals/behavioral.md): seven decision-boundary scenarios — unchanged proposal, too few proposals, no viable candidate, missing evidence, regression during synthesis, pressure to loosen a criterion, and a correction during verification.
+- [Behavioral evals](skills/chimera/evals/behavioral.md): eight decision-boundary scenarios — unchanged proposal, too few proposals, no viable candidate, missing evidence, regression during synthesis, pressure to loosen a criterion, a correction during verification, and a missing required input.
 
 ## Limitations
 

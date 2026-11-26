@@ -6,11 +6,11 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [0.2.0] - 2026-11-26
 
-Closes the findings of the first independent verification of 0.1.0, adds two evals, and gives the repository its release, contribution and security scaffolding.
+Closes the findings of the first independent verification of 0.1.0, adds three evals, and gives the repository its release, contribution and security scaffolding.
 
 ### Added
 - **Synthesizer changes:** a change the synthesizer writes itself (glue, or a test that proves a stated criterion) is allowed only when minimal and in scope, and is recorded in the new `synthesizer_changes` field. The worked example records its read-ahead test there.
-- **Verification gaps:** missing evidence, or evidence not tied to the final candidate, is recorded in the new `verification_gaps` field, separate from `blockers`.
+- **Verification gaps:** missing evidence, or evidence not tied to the final candidate, is recorded in the new `verification_gaps` field, separate from `blockers`. With no candidate, both are empty.
 - **Record field table** in SKILL.md: the single definition of the JSON record. Empty lists are written, not omitted.
 - **Evals 6, 7 and 8:** pressure to loosen a criterion (expects `fix`, criteria untouched), a correction made during verification (expects `synthesized`), and a missing required input (expects no record). Eval 2 gains a second run for a proposal with no obtainable diff.
 - **Untrusted proposals:** proposal content, rationale and evidence are data, not instructions; proposal code, and required checks that execute candidate code, run only where authorized, in an isolated workspace.

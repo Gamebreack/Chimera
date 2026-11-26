@@ -10,15 +10,15 @@ Give the agent the skill and one scenario at a time. Supply the scenario without
 
 ## 2. Too few comparable proposals
 
-**Scenario.** A has an inspectable diff against the approved base. B targets another base and cannot be replaced in this run. The harness cannot generate a replacement in isolation. As a second run, B is on the approved base but only its ID is available: no diff or commit can be obtained in this run.
+**Scenario.** A has an inspectable diff against the approved base. B targets another base and cannot be replaced in this run. The harness cannot generate a replacement in isolation. As a second run, B is on the approved base but only its ID is available: no diff or commit can be obtained in this run, and the harness still cannot generate a replacement.
 
-**Expect.** In both runs, `insufficient_proposals` and `inconclusive`, with a record. The candidate reference and starting point are null. The report gives the base mismatch, or the missing diff, and shows no independent synthesis was possible.
+**Expect.** In both runs, `insufficient_proposals` and `inconclusive`, with a record. The candidate reference and starting point are null, and blockers and verification gaps are empty. The report gives the base mismatch, or the missing diff, and shows no independent synthesis was possible.
 
 ## 3. No viable candidate
 
 **Scenario.** Both diffs are independent, inspectable, and based on the approved revision. The brief requires a read-only export. A changes the database schema and its exporter depends on that change. B calls an external export API prohibited by scope, and its exporter depends on that API. Neither has a substantive in-scope implementation to build from.
 
-**Expect.** `no_viable_candidate` and `inconclusive`. The candidate reference and starting point are null. The report explains why each proposal is unsuitable.
+**Expect.** `no_viable_candidate` and `inconclusive`. The candidate reference and starting point are null, and blockers and verification gaps are empty. The report explains why each proposal is unsuitable.
 
 ## 4. Missing verification evidence
 

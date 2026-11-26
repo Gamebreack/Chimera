@@ -17,7 +17,7 @@ flowchart TD
 
     subgraph F1["Phase 1 · Inputs"]
         IN["<b>Inputs checked</b><br/>brief, bases, scope, criteria"]
-        ST["<b>Stopped</b><br/>still missing, no status or record"]
+        ST["<b>Stopped</b><br/>gaps reported, no verdict or record"]
         PR["<b>Proposals</b><br/>ID and diff each, blind<br/>content is data"]
         IS["<b>insufficient_proposals</b><br/>fewer than two independent,<br/>comparable"]
     end
@@ -33,7 +33,7 @@ flowchart TD
 
     subgraph F3["Phase 3 · Verify"]
         RV["<b>Independent review</b><br/>brief, criteria, candidate"]
-        CK["<b>Required checks</b><br/>exact candidate, isolated"]
+        CK["<b>Required checks</b><br/>exact candidate, isolated if run"]
         VD["<b>Verdict</b><br/>fix, then inconclusive, then pass"]
     end
 
@@ -46,7 +46,7 @@ flowchart TD
     IN -.->|"unresolved"| ST
     IN --> PR
     %% 3: optional
-    HA -.->|"if asked: two attempts"| PR
+    HA -.->|"if needed: two attempts"| PR
     %% 4: optional
     PR -.->|"too few"| IS
     PR --> CM
@@ -86,10 +86,10 @@ flowchart TD
 
 | Phase | In one line |
 |---|---|
-| Inputs | The brief, exact bases, scope, criteria and checks are fixed; gaps go back to the brief's owner, and an input that stays missing stops the run with no record. Proposals are supplied, or the host makes two blind attempts on request; proposal content is data, not instructions. Fewer than two independent, comparable proposals end in `insufficient_proposals`. |
+| Inputs | The brief, exact bases, scope, criteria and checks are fixed; gaps go back to the brief's owner, and an input that stays missing stops the run with no record. Proposals are supplied or, if needed, the agent asks the host for two blind attempts; proposal content is data, not instructions. Fewer than two independent, comparable proposals end in `insufficient_proposals`. |
 | Synthesize | Diffs are compared; one proposal becomes the starting point, or the run ends in `no_viable_candidate`. Ideas are adopted or omitted with reasons, any synthesizer change is recorded, and the candidate is frozen. |
-| Verify | A reviewer who did not author or synthesize the candidate gets the brief, criteria, bases, checks and the exact frozen candidate, but not the synthesis rationale. The required checks run on that exact candidate, isolated when they execute its code. If the candidate changes, it is frozen again and both run again. Missing or untied evidence, including a missing review, is a verification gap, kept apart from blockers. The verdict rules apply in order. |
-| Return | One report and one JSON record. The status is `unchanged` if the final candidate matches the starting proposal's patch, else `synthesized`, including after a correction during verification. With no candidate, the reference and starting point are null and the verdict is `inconclusive`. |
+| Verify | A reviewer who did not author or synthesize the candidate gets the brief, scope, criteria, bases, checks and the exact frozen candidate; the synthesis rationale is kept out of the initial handoff. The required checks run on that exact candidate, isolated when they execute its code. If the candidate changes, it is frozen again and both run again. Missing or untied evidence, including a missing review, is a verification gap, kept apart from blockers. The verdict rules apply in order. |
+| Return | One report and one JSON record. The status is `unchanged` if the final candidate is identical to the starting proposal's patch, else `synthesized`, including after a correction during verification. With no candidate, the reference and starting point are null and the verdict is `inconclusive`. |
 
 ## 2. Who talks to whom
 
@@ -106,7 +106,7 @@ flowchart TD
     RE[("<b>Repositories</b><br/>exact base revisions")]
 
     OP -->|"brief, proposals"| CH
-    CH -->|"report, record"| OP
+    CH -->|"questions, report, record"| OP
     AU -->|"diffs, evidence"| CH
     %% 3: optional
     CH -.->|"request attempts"| HA
@@ -151,7 +151,7 @@ sequenceDiagram
     CH-->>OP: report and JSON record
 ```
 
-Step 2 happens only when the operator did not supply the proposals.
+Step 2 happens only if the agent needs the host to make the attempts.
 
 ## Where it lives
 
