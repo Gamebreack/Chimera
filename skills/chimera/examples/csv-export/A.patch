@@ -1,0 +1,21 @@
+diff --git a/export.py b/export.py
+index 7ec5343..b4bca83 100644
+--- a/export.py
++++ b/export.py
+@@ -1,8 +1,12 @@
+ import csv
+-import io
++
++
++class RowOutput:
++    def write(self, text):
++        return text
+ 
+ 
+ def csv_chunks(rows):
+-    output = io.StringIO(newline="")
+-    csv.writer(output).writerows(rows)
+-    yield output.getvalue()
++    writer = csv.writer(RowOutput())
++    for row in rows:
++        yield writer.writerow(row)
