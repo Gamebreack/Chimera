@@ -83,9 +83,17 @@ class ValidateTests(unittest.TestCase):
         self.assertTrue(any("unittest failed" in e for e in errors), errors)
 
     def test_check_exception_fails_validation(self):
-        (self.root / SKILL).unlink()
-        with contextlib.redirect_stdout(io.StringIO()):
-            self.assertEqual(1, validate.main(["--root", str(self.root), "--skip-fixture"]))
+        def broken(root):
+            raise OSError("unreadable")
+
+        saved = validate.CHECKS
+        validate.CHECKS = [("broken", broken)]
+        try:
+            with contextlib.redirect_stdout(io.StringIO()):
+                errors = validate.validate(self.root)
+        finally:
+            validate.CHECKS = saved
+        self.assertEqual(["broken: OSError: unreadable"], errors)
 
     def test_fixture_ignores_inherited_git_variables(self):
         outer = self.root / "outer"
