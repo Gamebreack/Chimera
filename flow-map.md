@@ -164,4 +164,4 @@ Step 2 happens only when the operator did not supply the proposals.
 
 When the flow changes, the map changes in the same PR. To update, see what changed since the commit below.
 
-Updated 2026-11-26 · Chimera release/v0.2.0 87ef6ea
+Updated 2026-11-26 · Chimera release/v0.2.0 cb793f3
