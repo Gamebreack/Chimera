@@ -8,11 +8,13 @@ The fixture repository `csv-fixture` has exact base `00af1155d107255636168b658d0
 
 ## Synthesis report
 
+This example is illustrative. The fixture, the three patches, and both required checks reproduce with the script at the end; the independent review is described, not recorded.
+
 [A's patch](csv-export/A.patch) uses a CSV writer that returns each encoded record directly. [B's patch](csv-export/B.patch) buffers the whole export, then splits on line breaks. B adds tests for empty input and fields containing commas, quotes, and newlines.
 
-Start with A. Adapt B's tests to assert chunk boundaries as well as CSV output. Empty input must yield zero chunks, and a quoted field containing a newline must stay in a single chunk. Add a test that fails if the exporter consumes the second row before yielding the first. Omit B's buffering because it reads ahead and can split a quoted record across chunks.
+Start with A. Adapt B's tests to assert chunk boundaries as well as CSV output. Empty input must yield zero chunks, and a quoted field containing a newline must stay in a single chunk. Neither proposal tests the brief's no-read-ahead rule, so the synthesizer adds one test that fails if the exporter consumes the next row before yielding the current record; it is recorded as a synthesizer change. Omit B's buffering because it reads ahead and can split a quoted record across chunks. The candidate's `export.py` is A's, byte for byte.
 
-The [final patch](csv-export/candidate.patch) is tied to the base and identified by its SHA-256 digest in the record below. The four tests and the whitespace check passed on that patch. An independent reviewer applied the same patch to the exact base, repeated both checks, and found no blockers. The reviewer also confirmed default CSV formatting on additional inputs and one-row-at-a-time consumption from an infinite iterable.
+The [final patch](csv-export/candidate.patch) applies to the `csv-fixture` base and is identified by its SHA-256 digest in the record below. The four tests and the whitespace check passed on that patch. An independent reviewer applied the same patch to the exact base, repeated both checks, and found no blockers. The reviewer also confirmed default CSV formatting on additional inputs and one-row-at-a-time consumption from an infinite iterable. No required evidence is missing, so the record has no verification gaps.
 
 ## Result
 
@@ -26,14 +28,21 @@ The [final patch](csv-export/candidate.patch) is tied to the base and identified
   "synthesis_status": "synthesized",
   "candidate_ref": {
     "repo": "csv-fixture",
-    "path": "csv-export/candidate.patch",
-    "sha256": "eca2ec0d53a2e851edeb0c5fca77e80ed5548f1a7d303f15bcedc139052f96e4"
+    "base_revision": "00af1155d107255636168b658d0fad6520cf5f3a",
+    "patch": "csv-export/candidate.patch",
+    "sha256": "022d23d56268f752f494e5acce96f9a784b4d89359171f2248e83a9274937767"
   },
   "adopted_ideas": [
     {
       "proposal_id": "B",
       "idea": "Adapt empty-input and special-character tests",
       "reason": "Check zero chunks for empty input and one complete CSV record for a quoted field containing a newline."
+    }
+  ],
+  "synthesizer_changes": [
+    {
+      "change": "Add test_reads_one_row_per_chunk",
+      "reason": "The brief forbids reading the next row before yielding the current record, and neither proposal tests it."
     }
   ],
   "material_omissions": [
@@ -45,14 +54,15 @@ The [final patch](csv-export/candidate.patch) is tied to the base and identified
   ],
   "independent_verdict": "pass",
   "evidence": {
-    "candidate_sha256": "eca2ec0d53a2e851edeb0c5fca77e80ed5548f1a7d303f15bcedc139052f96e4",
+    "candidate_sha256": "022d23d56268f752f494e5acce96f9a784b4d89359171f2248e83a9274937767",
     "checks": [
       {"check": "git diff --check", "result": "pass", "detail": "Exit 0"},
       {"check": "python -m unittest -v", "result": "pass", "detail": "4 tests passed"}
     ],
     "independent_review": {"result": "no_blockers", "detail": "Reviewed the exact patch against the brief, reran both checks, and checked additional CSV inputs and lazy iteration."}
   },
-  "blockers": []
+  "blockers": [],
+  "verification_gaps": []
 }
 ```
 

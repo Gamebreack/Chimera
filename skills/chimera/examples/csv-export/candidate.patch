@@ -20,10 +20,10 @@ index 7ec5343..b4bca83 100644
 +    for row in rows:
 +        yield writer.writerow(row)
 diff --git a/test_export.py b/test_export.py
-index 5b9e7e0..47bd5aa 100644
+index 5b9e7e0..ea8049f 100644
 --- a/test_export.py
 +++ b/test_export.py
-@@ -6,3 +6,19 @@ from export import csv_chunks
+@@ -6,3 +6,26 @@ from export import csv_chunks
  class ExportTests(unittest.TestCase):
      def test_simple_rows(self):
          self.assertEqual("a,1\r\nb,2\r\n", "".join(csv_chunks([["a", 1], ["b", 2]])))
@@ -37,9 +37,16 @@ index 5b9e7e0..47bd5aa 100644
 +            list(csv_chunks([["a,b", 'say "hi"', "line\nbreak"]])),
 +        )
 +
-+    def test_first_chunk_reads_only_first_row(self):
-+        def rows():
-+            yield ["first"]
-+            self.fail("the exporter read ahead before yielding the first row")
++    def test_reads_one_row_per_chunk(self):
++        consumed = []
 +
-+        self.assertEqual("first\r\n", next(csv_chunks(rows())))
++        def rows():
++            for value in ["first", "second", "third"]:
++                consumed.append(value)
++                yield [value]
++
++        chunks = csv_chunks(rows())
++        self.assertEqual("first\r\n", next(chunks))
++        self.assertEqual(["first"], consumed)
++        self.assertEqual("second\r\n", next(chunks))
++        self.assertEqual(["first", "second"], consumed)

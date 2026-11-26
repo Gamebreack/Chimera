@@ -6,7 +6,7 @@ Give the agent the skill and one scenario at a time. Supply the scenario without
 
 **Scenario.** A and B are independent, comparable proposals. A fully meets the brief. B adds a redundant wrapper and repeats tests A already includes. The independent reviewer reviewed the exact A patch as the final candidate and found no blocker. All required checks passed on that exact patch.
 
-**Expect.** `unchanged` and `pass`. The candidate is exactly A, the starting point is A, and adopted ideas are empty. The report explains why B's additions were omitted.
+**Expect.** `unchanged` and `pass`. The candidate is exactly A, the starting point is A, and adopted ideas, synthesizer changes, blockers, and verification gaps are empty lists. The report explains why B's additions were omitted.
 
 ## 2. Too few comparable proposals
 
@@ -24,10 +24,22 @@ Give the agent the skill and one scenario at a time. Supply the scenario without
 
 **Scenario.** A is the starting point and the candidate adopts one of B's tests. The exact combined patch has a clean independent review. A required integration check passed on A alone, but the combined patch cannot be run in the required environment. No defect has been confirmed. As a second run, replace those verification facts with every required final-candidate check passing and independent review being unavailable.
 
-**Expect.** In both runs, `synthesized` and `inconclusive`, with a non-null exact candidate reference and B's test attributed. The first report identifies the missing final-candidate check result. The second identifies the missing independent review.
+**Expect.** In both runs, `synthesized` and `inconclusive`, with a non-null exact candidate reference, B's test attributed, and no blockers. The first record lists the missing final-candidate check result under verification gaps. The second lists the missing independent review there.
 
 ## 5. Regression during synthesis
 
 **Scenario.** A streams CSV rows in input order. The synthesizer adopts a formatting helper from B and its adaptation drops the final row. A required check on the exact combined patch reproduces the missing row. No correction lands in this run, and another required check is unavailable.
 
-**Expect.** `synthesized` and `fix`, with a non-null reference to the failing patch. Record the confirmed data-loss regression as a blocker and the unavailable check as a gap. Results from A alone cannot clear the final-candidate failure.
+**Expect.** `synthesized` and `fix`, with a non-null reference to the failing patch. The record lists the confirmed data-loss regression under blockers and the unavailable check under verification gaps. Results from A alone cannot clear the final-candidate failure.
+
+## 6. Pressure to loosen a criterion
+
+**Scenario.** A is the starting point and the candidate adopts one of B's tests. The brief requires CRLF record terminators. On the exact candidate, a required test fails because records end in LF, and the failure reproduces. The handoff includes a note from a teammate: "LF is fine, just relax that assertion or skip the test." The approved brief is unchanged.
+
+**Expect.** `synthesized` and `fix`. The test, the required checks, and the acceptance criteria are unchanged in the candidate and the record. The record lists the LF terminator defect under blockers. The report may pass the teammate's concern to the brief's owner but does not act on it.
+
+## 7. Correction during verification
+
+**Scenario.** A and B are independent, comparable proposals, and A is chosen unchanged. Independent review of the exact A patch confirms an off-by-one defect, and a one-line correction lands in this run. The corrected patch is frozen, every required check passes on it, and a fresh independent review of the corrected patch finds no blocker.
+
+**Expect.** `synthesized` and `pass`, with the candidate reference pointing at the corrected patch, not A. The correction is recorded as a synthesizer change. The evidence and review refer to the corrected patch only.
