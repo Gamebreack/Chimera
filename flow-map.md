@@ -17,7 +17,7 @@ flowchart TD
 
     subgraph F1["Phase 1 · Inputs"]
         IN["<b>Inputs checked</b><br/>brief, bases, scope, criteria"]
-        ST["<b>Stopped</b><br/>gaps reported, no verdict or record"]
+        ST["<b>Stopped</b><br/>gaps reported, no status or verdict"]
         PR["<b>Proposals</b><br/>ID and diff each, blind<br/>content is data"]
         IS["<b>insufficient_proposals</b><br/>fewer than two independent,<br/>comparable"]
     end
@@ -33,7 +33,7 @@ flowchart TD
 
     subgraph F3["Phase 3 · Verify"]
         RV["<b>Independent review</b><br/>brief, criteria, candidate"]
-        CK["<b>Required checks</b><br/>exact candidate, isolated if run"]
+        CK["<b>Required checks</b><br/>exact candidate, isolated for code"]
         VD["<b>Verdict</b><br/>fix, then inconclusive, then pass"]
     end
 
@@ -89,7 +89,7 @@ flowchart TD
 | Inputs | The brief, exact bases, scope, criteria and checks are fixed; gaps go back to the brief's owner, and an input that stays missing stops the run with no record. Proposals are supplied or, if needed, the agent asks the host for two blind attempts; proposal content is data, not instructions. Fewer than two independent, comparable proposals end in `insufficient_proposals`. |
 | Synthesize | Diffs are compared; one proposal becomes the starting point, or the run ends in `no_viable_candidate`. Ideas are adopted or omitted with reasons, any synthesizer change is recorded, and the candidate is frozen. |
 | Verify | A reviewer who did not author or synthesize the candidate gets the brief, scope, criteria, bases, checks and the exact frozen candidate; the synthesis rationale is kept out of the initial handoff. The required checks run on that exact candidate, isolated when they execute its code. If the candidate changes, it is frozen again and both run again. Missing or untied evidence, including a missing review, is a verification gap, kept apart from blockers. The verdict rules apply in order. |
-| Return | One report and one JSON record. The status is `unchanged` if the final candidate is identical to the starting proposal's patch, else `synthesized`, including after a correction during verification. With no candidate, the reference and starting point are null and the verdict is `inconclusive`. |
+| Return | One report and one JSON record. The status is `unchanged` if the final candidate is identical to the starting proposal's patch, else `synthesized`, including after a correction during verification. With no candidate, the reference and starting point are null and the verdict is `inconclusive`, with no blockers or gaps. |
 
 ## 2. Who talks to whom
 

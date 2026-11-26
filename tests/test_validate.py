@@ -74,6 +74,19 @@ class ValidateTests(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(0, validate.main(["--root", str(self.root), "--skip-fixture"]))
 
+    def test_validate_runs_the_fixture(self):
+        self.edit(PATCHES / "candidate.patch", '"first\\r\\n", next(chunks)', '"first\\n", next(chunks)')
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            errors = validate.validate(self.root)
+        self.assertIn("FAIL fixture", out.getvalue())
+        self.assertTrue(any("unittest failed" in e for e in errors), errors)
+
+    def test_check_exception_fails_validation(self):
+        (self.root / SKILL).unlink()
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(1, validate.main(["--root", str(self.root), "--skip-fixture"]))
+
     def test_fixture_ignores_inherited_git_variables(self):
         outer = self.root / "outer"
         outer.mkdir()
