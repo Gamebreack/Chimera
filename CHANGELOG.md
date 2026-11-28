@@ -4,10 +4,15 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-28
+
+Repository tooling and documentation only; the skill's behavior, statuses and record are unchanged.
+
 ### Added
-- **Pre-push checks:** `scripts/hooks/pre_push.sh` runs the line limits, the validator and the tests before every push, and rejects tracked `.env` files and absolute home paths across all tracked files; `pre-commit install` now installs the push hook too.
-- **`.env` guard:** a commit hook rejects `.env` files.
+- **Pre-push checks:** `scripts/hooks/pre_push.sh` runs the line limits, the validator and the tests before every push. It rejects `.env` files, a root `CONTEXT.md` and absolute home paths across all tracked files and in the commits of the pushed branch (even if later removed; pre-commit passes one range per push, merge resolutions included), matches quoted paths without GNU grep or PCRE, and fails closed; `pre-commit install` now installs the push hook too.
+- **Commit guards:** commit hooks reject `.env` files and a root `CONTEXT.md` (the local planning entry point stays local).
 - **Branch model:** documented in CONTRIBUTING.md and AGENTS.md.
+- **README: With MAO:** how to install Chimera through MAO's setup and which MAO roles supply the proposals and the review.
 
 ### Changed
 - **CI:** `actions/checkout` and `actions/setup-python` are pinned to commit SHAs.
@@ -44,6 +49,7 @@ Closes the findings of the first independent verification of 0.1.0, adds three e
 - The CSV export worked example with A, B and candidate patches.
 - Five behavioral evals: unchanged proposal, too few proposals, no viable candidate, missing evidence, regression during synthesis.
 
-[Unreleased]: https://github.com/Gamebreack/Chimera/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/Gamebreack/Chimera/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/Gamebreack/Chimera/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/Gamebreack/Chimera/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/Gamebreack/Chimera/releases/tag/v0.1.0

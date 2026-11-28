@@ -28,7 +28,7 @@ If a change alters skill behavior (statuses, verdict rules, record fields), upda
 
 ## Git hooks
 
-This repo uses [pre-commit](https://pre-commit.com), which must be installed; then run `pre-commit install` once per clone; it installs both the commit and the push hooks. The commit hooks scan for secrets, reject `.env` files, fix whitespace and YAML hygiene, enforce the line limits, reject absolute home paths, and run the validator. The push hook (`scripts/hooks/pre_push.sh`) rejects tracked `.env` files and absolute home paths across all tracked files, then re-runs the line limits, the validator and the tests. Run the commit hooks on everything with `pre-commit run --all-files`, and never bypass them with `--no-verify`.
+This repo uses [pre-commit](https://pre-commit.com), which must be installed; then run `pre-commit install` once per clone; it installs both the commit and the push hooks. The commit hooks scan for secrets, reject `.env` files and a root `CONTEXT.md` (local planning stays local), fix whitespace and YAML hygiene, enforce the line limits, reject absolute home paths, and run the validator. The push hook (`scripts/hooks/pre_push.sh`) rejects tracked `.env` files, a root `CONTEXT.md` and absolute home paths across all tracked files and in the commits of the pushed branch (pre-commit passes one range per push), then re-runs the line limits, the validator and the tests. Run the commit hooks on everything with `pre-commit run --all-files`, and never bypass them with `--no-verify`.
 
 ## Versioning
 
