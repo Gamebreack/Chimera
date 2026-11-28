@@ -66,7 +66,14 @@ repos:
         files: (^|/)\.env(\..*)?$
         stages: [pre-commit]
 
-      # Whole-repo guards (tracked .env files, home paths), then the checks CI runs; does not re-invoke pre-commit (no recursion).
+      - id: no-local-context
+        name: local planning entry point (root CONTEXT.md) is never committed
+        entry: root CONTEXT.md stays local and git-excluded; do not commit it
+        language: fail
+        files: ^CONTEXT\.md$
+        stages: [pre-commit]
+
+      # Whole-repo guards (tracked .env files and root CONTEXT.md, home paths), then the checks CI runs; does not re-invoke pre-commit (no recursion).
       - id: pre-push-checks
         name: pre-push checks (.env, home paths, doc length, validator, tests)
         entry: scripts/hooks/pre_push.sh
