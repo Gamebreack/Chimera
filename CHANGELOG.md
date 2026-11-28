@@ -9,7 +9,7 @@ All notable changes to this project are documented here. The format follows [Kee
 Repository tooling and documentation only; the skill's behavior, statuses and record are unchanged.
 
 ### Added
-- **Pre-push checks:** `scripts/hooks/pre_push.sh` runs the line limits, the validator and the tests before every push. It rejects `.env` files, a root `CONTEXT.md` and absolute home paths across all tracked files and in the commits being pushed (even if later removed), matches quoted paths, and fails closed; `pre-commit install` now installs the push hook too.
+- **Pre-push checks:** `scripts/hooks/pre_push.sh` runs the line limits, the validator and the tests before every push. It rejects `.env` files, a root `CONTEXT.md` and absolute home paths across all tracked files and in the commits of the pushed branch (even if later removed; pre-commit passes one range per push, merge resolutions included), matches quoted paths without GNU grep or PCRE, and fails closed; `pre-commit install` now installs the push hook too.
 - **Commit guards:** commit hooks reject `.env` files and a root `CONTEXT.md` (the local planning entry point stays local).
 - **Branch model:** documented in CONTRIBUTING.md and AGENTS.md.
 - **README: With MAO:** how to install Chimera through MAO's setup and which MAO roles supply the proposals and the review.
