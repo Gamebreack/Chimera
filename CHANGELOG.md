@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-28
+
+Repository tooling and documentation only; the skill's behavior, statuses and record are unchanged.
+
 ### Added
 - **Pre-push checks:** `scripts/hooks/pre_push.sh` runs the line limits, the validator and the tests before every push, and rejects tracked `.env` files and absolute home paths across all tracked files; `pre-commit install` now installs the push hook too.
 - **`.env` guard:** a commit hook rejects `.env` files.
@@ -45,6 +49,7 @@ Closes the findings of the first independent verification of 0.1.0, adds three e
 - The CSV export worked example with A, B and candidate patches.
 - Five behavioral evals: unchanged proposal, too few proposals, no viable candidate, missing evidence, regression during synthesis.
 
-[Unreleased]: https://github.com/Gamebreack/Chimera/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/Gamebreack/Chimera/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/Gamebreack/Chimera/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/Gamebreack/Chimera/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/Gamebreack/Chimera/releases/tag/v0.1.0
