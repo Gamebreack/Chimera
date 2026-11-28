@@ -66,9 +66,9 @@ repos:
         files: (^|/)\.env(\..*)?$
         stages: [pre-commit]
 
-      # Same checks CI runs, without re-invoking pre-commit (no recursion).
+      # Whole-repo guards (tracked .env files, home paths), then the checks CI runs; does not re-invoke pre-commit (no recursion).
       - id: pre-push-checks
-        name: pre-push checks (doc length, validator, tests)
+        name: pre-push checks (.env, home paths, doc length, validator, tests)
         entry: scripts/hooks/pre_push.sh
         language: system
         pass_filenames: false
