@@ -5,6 +5,10 @@
 1. For anything beyond a small fix, open an issue first and describe the problem.
 2. Then open a pull request against `main`. Every change lands through a pull request.
 
+## Branches
+
+Work happens on feature branches, which stay local. They merge into `lesk`; only `lesk` is pushed and opened as a pull request against `main`. Branch protection is not available for this repository, so the model relies on discipline.
+
 ## Rules a change must keep
 
 Every change keeps the rules in [AGENTS.md](AGENTS.md). They are not repeated here.
@@ -24,7 +28,7 @@ If a change alters skill behavior (statuses, verdict rules, record fields), upda
 
 ## Git hooks
 
-This repo uses [pre-commit](https://pre-commit.com), which must be installed; then run `pre-commit install` once per clone. The hooks scan for secrets, fix whitespace and YAML hygiene, enforce the line limits, reject absolute home paths, and run the validator. Run them all with `pre-commit run --all-files`, and never bypass them with `--no-verify`.
+This repo uses [pre-commit](https://pre-commit.com), which must be installed; then run `pre-commit install` once per clone; it installs both the commit and the push hooks. The commit hooks scan for secrets, reject `.env` files, fix whitespace and YAML hygiene, enforce the line limits, reject absolute home paths, and run the validator. The push hook re-runs the line limits, the validator and the tests (`scripts/hooks/pre_push.sh`). Run the commit hooks on everything with `pre-commit run --all-files`, and never bypass them with `--no-verify`.
 
 ## Versioning
 

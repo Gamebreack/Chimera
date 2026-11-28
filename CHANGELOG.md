@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added
+- **Pre-push checks:** `scripts/hooks/pre_push.sh` runs the line limits, the validator and the tests before every push, and rejects tracked `.env` files and absolute home paths across all tracked files; `pre-commit install` now installs the push hook too.
+- **`.env` guard:** a commit hook rejects `.env` files.
+- **Branch model:** documented in CONTRIBUTING.md and AGENTS.md.
+
+### Changed
+- **CI:** `actions/checkout` and `actions/setup-python` are pinned to commit SHAs.
+
 ## [0.2.0] - 2026-11-26
 
 Closes the findings of the first independent verification of 0.1.0, adds three evals, and gives the repository its release, contribution and security scaffolding.
