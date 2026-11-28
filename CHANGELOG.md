@@ -4,6 +4,9 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Fixed
+- **Pre-push hook:** also checks the commits being pushed (`.env` paths and added home paths, even if later removed) and handles quoted paths; a root `CONTEXT.md` (local planning entry point) is rejected at commit and push.
+
 ## [0.2.1] - 2026-11-28
 
 Repository tooling and documentation only; the skill's behavior, statuses and record are unchanged.
