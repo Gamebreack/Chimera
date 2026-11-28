@@ -1,6 +1,6 @@
-# Git hooks (pre-commit framework). Install once per clone: `pre-commit install`. Run all: `pre-commit run --all-files`.
-# Never bypass with --no-verify.
-default_install_hook_types: [pre-commit]
+# Git hooks (pre-commit framework). Install once per clone: `pre-commit install` (installs the commit and push hooks).
+# Run all commit-stage hooks: `pre-commit run --all-files`. Never bypass with --no-verify.
+default_install_hook_types: [pre-commit, pre-push]
 default_stages: [pre-commit]
 
 repos:
@@ -58,3 +58,19 @@ repos:
         types: [text]
         exclude: ^\.pre-commit-config\.yaml$
         stages: [pre-commit]
+
+      - id: no-env-file
+        name: secrets guard (no .env files)
+        entry: .env files must not be committed
+        language: fail
+        files: (^|/)\.env(\..*)?$
+        stages: [pre-commit]
+
+      # Same checks CI runs, without re-invoking pre-commit (no recursion).
+      - id: pre-push-checks
+        name: pre-push checks (doc length, validator, tests)
+        entry: scripts/hooks/pre_push.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
