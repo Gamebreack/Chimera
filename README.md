@@ -100,6 +100,10 @@ git clone https://github.com/Gamebreack/Chimera.git
 # then copy or symlink Chimera/skills/chimera into your host's skills directory
 ```
 
+### With MAO
+
+If you use [multi-agent-orchestration](https://github.com/Gamebreack/multi-agent-orchestration) (MAO), `mao-setup` offers Chimera as an optional skill and links it for you. MAO's role agents can then write the independent proposals, each in its own git worktree, and run the independent review and checks on the frozen candidate.
+
 ## Usage
 
 Supply the approved brief, the exact base revision of each repository, scope limits, acceptance criteria and required checks. Provide two or more independent proposal diffs or commits with IDs and any evidence, or ask the agent to have the host generate two blind attempts in isolated workspaces.

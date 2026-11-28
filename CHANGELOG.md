@@ -8,6 +8,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - **Pre-push checks:** `scripts/hooks/pre_push.sh` runs the line limits, the validator and the tests before every push, and rejects tracked `.env` files and absolute home paths across all tracked files; `pre-commit install` now installs the push hook too.
 - **`.env` guard:** a commit hook rejects `.env` files.
 - **Branch model:** documented in CONTRIBUTING.md and AGENTS.md.
+- **README: With MAO:** how to install Chimera through MAO's setup and which MAO roles supply the proposals and the review.
 
 ### Changed
 - **CI:** `actions/checkout` and `actions/setup-python` are pinned to commit SHAs.
